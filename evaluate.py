@@ -17,9 +17,9 @@ from data_loader import DataLoader
 import utils
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='data/msra/', help="Directory containing the dataset")
+parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/msra/', help="Directory containing the dataset")
 parser.add_argument('--bert_model_dir', default='bert-base-chinese-pytorch', help="Directory containing the BERT model in PyTorch")
-parser.add_argument('--model_dir', default='experiments/base_model', help="Directory containing params.json")
+parser.add_argument('--model_dir', default='/content/BERT-keyphrase-extraction/experiments/base_model', help="Directory containing params.json")
 parser.add_argument('--seed', type=int, default=23, help="random seed for initialization")
 parser.add_argument('--restore_file', default='best', help="name of the file in `model_dir` containing weights to load")
 parser.add_argument('--multi_gpu', default=False, action='store_true', help="Whether to use multiple GPUs if available")
