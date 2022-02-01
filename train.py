@@ -20,7 +20,7 @@ import utils
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/data/task1', help="Directory containing the dataset")
-parser.add_argument('--bert_model_dir', default='bert-base-uncased-pytorch', help="Directory containing the BERT model in PyTorch")
+parser.add_argument('--bert_model_dir', default='bert-base-uncased', help="Directory containing the BERT model in PyTorch")
 parser.add_argument('--model_dir', default='/content/BERT-keyphrase-extraction/experiments/base_model', help="Directory containing params.json")
 parser.add_argument('--seed', type=int, default=2019, help="random seed for initialization")
 parser.add_argument('--restore_file', default=None,
