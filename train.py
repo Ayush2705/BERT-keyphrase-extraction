@@ -138,7 +138,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Load the parameters from json file
-    json_path = os.path.join(args.model_dir, 'params.json')
+    json_path = os.path.join('/content/BERT-keyphrase-extraction/experiments/base_model', 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     params = utils.Params(json_path)
 
