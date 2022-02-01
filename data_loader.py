@@ -41,16 +41,21 @@ class DataLoader(object):
         """Loads sentences and tags from their corresponding files. 
             Maps tokens and tags to their indices and stores them in the provided dict d.
         """
-        sentences = []
-        tags = []
-
-        with open(sentences_file, 'r') as file:
+        sentences = []  
+        tags=[]      
+        x=[]
+        y=[]
+        t=[]
+        
+        with open(sentences_file, 'r',encoding="utf-8-sig") as file:
             for line in file:
                 # replace each token by its index
-                tokens = line.split()
+                tokens = self.tokenizer.tokenize(line)
+                x.append(tokens)
+                y.append(line.split())
                 sentences.append(self.tokenizer.convert_tokens_to_ids(tokens))
         
-        with open(tags_file, 'r') as file:
+        with open(tags_file, 'r',encoding="utf-8-sig") as file:
             for line in file:
                 # replace each tag by its index
                 tag_seq = [self.tag2idx.get(tag) for tag in line.strip().split(' ')]
@@ -59,12 +64,32 @@ class DataLoader(object):
         # checks to ensure there is a tag for each token
         assert len(sentences) == len(tags)
         for i in range(len(sentences)):
-#             print(sentences[i], tags[i])
-            assert len(tags[i]) == len(sentences[i])
+          a=(len(sentences[i]))-(len(tags[i]))
+          for j in range(a):
+            y[i].append("thermodynamics")
+            tags[i].append('1')
+#           print(sentences[i], tags[i])
+        
+        
+        b=0
+        for i in range(len(x)):   
+          z=0 
+          col=[]      
+          for j in range(len(x[i])):
+            if x[i][j] in y[i]:
+              z=y[i].index(x[i][j])
+              col.append(tags[i][z])
+            else:
+              col.append(1)
+          del tags[i][:]
+          t.append(col)
+              
+        
+          
 
         # storing sentences and tags in dict d
         d['data'] = sentences
-        d['tags'] = tags
+        d['tags'] = t
         d['size'] = len(sentences)
 
     def load_data(self, data_type):
@@ -107,7 +132,7 @@ class DataLoader(object):
         for i in range(data['size']//self.batch_size):
             # fetch sentences and tags
             sentences = [data['data'][idx] for idx in order[i*self.batch_size:(i+1)*self.batch_size]]
-            tags = [data['tags'][idx] for idx in order[i*self.batch_size:(i+1)*self.batch_size]]
+            t = [data['tags'][idx] for idx in order[i*self.batch_size:(i+1)*self.batch_size]]
 
             # batch length
             batch_len = len(sentences)
@@ -125,10 +150,10 @@ class DataLoader(object):
                 cur_len = len(sentences[j])
                 if cur_len <= max_len:
                     batch_data[j][:cur_len] = sentences[j]
-                    batch_tags[j][:cur_len] = tags[j]
+                    batch_tags[j][:cur_len] = t[j]
                 else:
                     batch_data[j] = sentences[j][:max_len]
-                    batch_tags[j] = tags[j][:max_len]
+                    batch_tags[j] = t[j][:max_len]
 
             # since all data are indices, we convert them to torch LongTensors
             batch_data = torch.tensor(batch_data, dtype=torch.long)
