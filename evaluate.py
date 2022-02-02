@@ -17,8 +17,8 @@ from data_loader import DataLoader
 import utils
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/msra/', help="Directory containing the dataset")
-parser.add_argument('--bert_model_dir', default='bert-base-chinese-pytorch', help="Directory containing the BERT model in PyTorch")
+parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/data/', help="Directory containing the dataset")
+parser.add_argument('--bert_model_dir', default='bert-base-uncased', help="Directory containing the BERT model in PyTorch")
 parser.add_argument('--model_dir', default='/content/BERT-keyphrase-extraction/experiments/base_model', help="Directory containing params.json")
 parser.add_argument('--seed', type=int, default=23, help="random seed for initialization")
 parser.add_argument('--restore_file', default='best', help="name of the file in `model_dir` containing weights to load")
@@ -110,11 +110,33 @@ if __name__ == '__main__':
     test_data_iterator = data_loader.data_iterator(test_data, shuffle=False)
 
     logging.info("- done.")
+    from transformers import WEIGHTS_NAME, CONFIG_NAME
 
+    output_dir = "/content/BERT-keyphrase-extraction/experiments/base_model"
+
+    # Step 1: Save a model, configuration and vocabulary that you have fine-tuned
+
+    # If we have a distributed model, save only the encapsulated model
+    # (it was wrapped in PyTorch DistributedDataParallel or DataParallel)
+    #model = BertForTokenClassification.from_pretrained('bert-base-uncased',num_labels=len(params.tag2idx))
+   # model_to_save = model.module if hasattr(model, 'module') else model
+
+    # If we save using the predefined names, we can load using `from_pretrained`
+    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
+    output_config_file = os.path.join(output_dir, CONFIG_NAME)
+
+    torch.save(model_to_save.state_dict(), output_model_file)
+    model_to_save.config.to_json_file(output_config_file)
+    
+    
+
+    # Step 2: Re-load the saved model and vocabulary
+
+    # Example for a Bert model
+    
     # Define the model
-    config_path = os.path.join(args.bert_model_dir, 'bert_config.json')
-    config = BertConfig.from_json_file(config_path)
-    model = BertForTokenClassification(config, num_labels=len(params.tag2idx))
+    
+    model = BertForTokenClassification.from_pretrained(output_dir,num_labels=len(params.tag2idx))
 
     model.to(params.device)
     # Reload weights from the saved file
