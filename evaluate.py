@@ -17,7 +17,7 @@ from data_loader import DataLoader
 import utils
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/data/', help="Directory containing the dataset")
+parser.add_argument('--data_dir', default='/content/BERT-keyphrase-extraction/data/task1', help="Directory containing the dataset")
 parser.add_argument('--bert_model_dir', default='bert-base-uncased', help="Directory containing the BERT model in PyTorch")
 parser.add_argument('--model_dir', default='/content/BERT-keyphrase-extraction/experiments/base_model', help="Directory containing params.json")
 parser.add_argument('--seed', type=int, default=23, help="random seed for initialization")
@@ -118,8 +118,8 @@ if __name__ == '__main__':
 
     # If we have a distributed model, save only the encapsulated model
     # (it was wrapped in PyTorch DistributedDataParallel or DataParallel)
-    #model = BertForTokenClassification.from_pretrained('bert-base-uncased',num_labels=len(params.tag2idx))
-   # model_to_save = model.module if hasattr(model, 'module') else model
+    model = BertForTokenClassification.from_pretrained('bert-base-uncased',num_labels=len(params.tag2idx))
+    model_to_save = model.module if hasattr(model, 'module') else model
 
     # If we save using the predefined names, we can load using `from_pretrained`
     output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
