@@ -68,7 +68,7 @@ class DataLoader(object):
           for j in range(a):
             y[i].append("thermodynamics")
             tags[i].append('1')
-#           print(sentences[i], tags[i])
+    # print(sentences[i], tags[i])
         
         
         b=0
@@ -81,7 +81,6 @@ class DataLoader(object):
               col.append(tags[i][z])
             else:
               col.append(1)
-          del tags[i][:]
           t.append(col)
               
         
